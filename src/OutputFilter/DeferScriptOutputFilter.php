@@ -20,6 +20,7 @@ class DeferScriptOutputFilter implements AssetOutputFilter
 
     public function __invoke(string $html, Asset $asset): string
     {
-        return str_replace('<script ', '<script defer ', $html);
+        $typeAttr = function_exists( 'is_admin' ) && ! is_admin() && function_exists( 'current_theme_supports' ) && ! current_theme_supports( 'html5', 'script' ) ? " type='text/javascript'" : '';
+        return str_replace("{$typeAttr} src='{$asset->url()}", "async {$typeAttr} src='{$asset->url()}", $html);
     }
 }
